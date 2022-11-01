@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fx/form.dart';
 
 void main() {
   runApp(const MyApp());
@@ -9,10 +10,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Container(
-        color: Colors.white,
-      ),
+    return const MaterialApp(
+      home: MyForm(),
     );
   }
 }
