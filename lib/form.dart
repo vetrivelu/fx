@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fx/firestore.dart';
+import 'package:fx/profile.dart';
 
 class MyForm extends StatefulWidget {
   const MyForm({super.key});
@@ -8,53 +10,83 @@ class MyForm extends StatefulWidget {
 }
 
 class _MyFormState extends State<MyForm> {
-  String name = '';
-  String phone = '';
-  DateTime? dob;
+  var name = TextEditingController();
+  var phone = TextEditingController();
+  var date = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: [Icon(Icons.search), Icon(Icons.search)],
-        title: Text("Whatsapp"),
+        title: const Text("My Form"),
       ),
-      body: Column(
+      body: Form(
+          child: Column(
         children: [
-          TextFormField(
-            onChanged: (val) {
-              name = val;
-            },
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextFormField(
+              controller: name,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Name',
+              ),
+            ),
           ),
-          TextFormField(
-            onChanged: (val) {
-              phone = val;
-            },
-          ),
-          TextFormField(
-            decoration: InputDecoration(
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextFormField(
+              controller: date,
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                hintText: 'Date of Birth',
                 suffix: IconButton(
-                    onPressed: () {
-                      showDatePicker(
-                        context: context,
-                        initialDate: dob ?? DateTime.now(),
-                        firstDate: DateTime(2010),
-                        lastDate: DateTime(2030),
-                      ).then((value) {
-                        dob = value;
-                      });
-                    },
-                    icon: Icon(Icons.calendar_month))),
+                  onPressed: () {
+                    showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2010),
+                      lastDate: DateTime(2025),
+                    ).then((value) {
+                      if (value != null) {
+                        date.text = value.toString().substring(0, 10);
+                      }
+                    });
+                  },
+                  icon: const Icon(Icons.calendar_month),
+                ),
+              ),
+            ),
           ),
-          ElevatedButton(
-              onPressed: () {
-                print(name);
-                print(phone);
-                print(dob.toString());
-              },
-              child: Text("Submit"))
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextFormField(
+              controller: phone,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Phone Number',
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SizedBox(
+                width: double.maxFinite,
+                height: 60,
+                child: ElevatedButton(
+                    onPressed: () {
+                      var object = {
+                        'name': name.text,
+                        'dob': date.text,
+                        'phone': phone.text,
+                      };
+                      var profile = Profile.fromJson(object);
+                      profile.add();
+                    },
+                    child: const Text("Submit"))),
+          )
         ],
-      ),
+      )),
     );
   }
 }
